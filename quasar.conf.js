@@ -43,16 +43,34 @@ module.exports = function (ctx) {
         'QList',
         'QItem',
         'QItemSection',
-        'QItemLabel'
+        'QItemLabel',
+
+        'QFooter',
+        'QTabs',
+        'QTab',
+        'QRouteTab',
+        'QCheckbox',
+        'QDialog',
+        'QCard',
+        'QCardSection',
+        'QCardActions',
+        'QSpace',
+        'QInput',
+        'QDate',
+        'QPopupProxy',
+        'QTime',
+        'QForm'
       ],
 
       directives: [
-        'Ripple'
+        'Ripple',
+        'ClosePopup'
       ],
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'Dialog'
       ]
     },
 
@@ -95,8 +113,8 @@ module.exports = function (ctx) {
       // workboxPluginMode: 'InjectManifest',
       // workboxOptions: {}, // only for NON InjectManifest
       manifest: {
-        // name: 'Awesome Todo',
-        // short_name: 'Awesome Todo',
+        // name: 'Awesome To-do',
+        // short_name: 'Awesome To-do',
         // description: 'A Quasar Framework app',
         display: 'standalone',
         orientation: 'portrait',
@@ -133,7 +151,7 @@ module.exports = function (ctx) {
     },
 
     cordova: {
-      // id: 'it.realtebo.awesome-todo',
+      // id: 'it.realtebo.awesome-to-do',
       // noIosLegacyBuildFlag: true, // uncomment only if you know what you are doing
     },
 
@@ -161,7 +179,7 @@ module.exports = function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        // appId: 'awesome-todo'
+        // appId: 'awesome-to-do'
       }
     }
   }
