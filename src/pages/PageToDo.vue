@@ -1,17 +1,28 @@
 <template>
   <q-page class="q-pa-md">
 
-    <q-list v-if="Object.keys(tasks).length >0"
-            bordered
-    >
+    <div class="row q-mb-lg">
+      <search />
 
-      <task
-              v-for="(task, key) in tasks"
-              :key="key"
-              :task="task"
-              :id="key"
-      />
-    </q-list>
+      <sort />
+    </div>
+
+    <p v-if="search
+              && !Object.keys(tasksToDo).length
+              && !Object.keys(tasksCompleted).length "
+    >No search results.</p>
+
+    <no-tasks
+        v-if="Object.keys(tasksToDo).length == 0 && !search"
+    ></no-tasks>
+
+    <tasks-to-do
+        v-if="Object.keys(tasksToDo).length > 0"
+        :tasks="tasksToDo"></tasks-to-do>
+
+    <tasks-completed
+        v-if="Object.keys(tasksCompleted).length > 0"
+        :tasks="tasksCompleted"></tasks-completed>
 
     <div class="absolute-bottom text-center q-mb-lg">
       <q-btn round
@@ -29,7 +40,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
+import NoTasks from '../components/NoTasks'
+import Search from '../components/Search'
 export default {
   data () {
     return {
@@ -39,7 +52,8 @@ export default {
   computed: {
     // dal modulo tasks prendo un elenco, array, di
     // singoli getter da importare ... wow !
-    ...mapGetters('tasks', ['tasks'])
+    ...mapGetters('tasks', ['tasksToDo', 'tasksCompleted']),
+    ...mapState('tasks', ['search'])
     /*
     tasks () {
       return this.$store.getters['tasks/tasks']
@@ -47,8 +61,17 @@ export default {
      */
   },
   components: {
-    'task': require('components/Tasks.vue').default,
-    'add-task': require('components/AddTask.vue').default
+    Search,
+    NoTasks,
+    'tasks-to-do': require('components/TasksToDo.vue').default,
+    'tasks-completed': require('components/TasksCompleted.vue').default,
+    'add-task': require('components/AddTask.vue').default,
+    'sort': require('components/Sort.vue').default
+  },
+  mounted () {
+    this.$root.$on('showAddTask', () => {
+      this.showAddTasks = true
+    })
   }
 }
 </script>

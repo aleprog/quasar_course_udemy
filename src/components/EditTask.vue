@@ -10,7 +10,10 @@
             ref="modalTaskName"
         />
 
-        <modal-task-due-date :dueDate.sync="taskToSubmit.dueDate" />
+        <modal-task-due-date
+            :dueDate.sync="taskToSubmit.dueDate"
+            @clear="clearDueDate"
+        />
 
         <modal-task-due-time
             v-if="taskToSubmit.dueDate"
@@ -28,16 +31,12 @@
 
 <script>
 import { mapActions } from 'vuex'
+import mixinAddEditTask from 'src/mixins/mixin-add-edit-task'
+
 export default {
+  mixins: [ mixinAddEditTask ],
   name: 'EditTask.vue',
   props: [ 'task', 'id' ],
-  components: {
-    'modal-header': require('components/ModalHeader.vue').default,
-    'modal-task-name': require('components/ModalTaskName.vue').default,
-    'modal-task-due-date': require('components/ModalTaskDueDate.vue').default,
-    'modal-task-due-time': require('components/ModalTaskDueTime.vue').default,
-    'modal-task-buttons': require('components/ModalTaskButtons.vue').default
-  },
   data () {
     return {
       taskToSubmit: {}
@@ -45,12 +44,6 @@ export default {
   },
   methods: {
     ...mapActions('tasks', ['updateTask']),
-    submitForm () {
-      this.$refs.modalTaskName.$refs.name.validate()
-      if (!this.$refs.modalTaskName.$refs.name.hasError) {
-        this.submitTask()
-      }
-    },
     submitTask () {
       this.updateTask({
         id: this.id,

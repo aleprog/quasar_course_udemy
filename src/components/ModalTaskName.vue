@@ -5,6 +5,7 @@
              clearable
              outlined
              autofocus
+             v-select-all
              :value="name"
              @input="$emit('update:name', $event)"
              ref="name"
@@ -15,9 +16,13 @@
 </template>
 
 <script>
+import { selectAll } from 'src/directives/directive-select-all.js'
 export default {
   name: 'ModalTaskName',
-  props: ['name']
+  props: ['name'],
+  directives: {
+    selectAll
+  }
 }
 </script>
 
