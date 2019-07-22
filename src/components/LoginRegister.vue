@@ -32,7 +32,7 @@
           type="password"
           class="col"
           outlined
-          v-model="formData.passwordl"
+          v-model="formData.password"
           label="Password"
           ref="password"
           stack-label
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   name: 'Register',
   props: [
@@ -61,12 +62,15 @@ export default {
   data () {
     return {
       formData: {
-        email: '',
-        password: ''
+        email: 'test@test.com',
+        password: 'password'
       }
     }
   },
   methods: {
+    ...mapActions('auth', [
+      'registerUser', 'loginUser'
+    ]),
     submitForm () {
       this.$refs.email.validate()
       this.$refs.password.validate()
@@ -76,8 +80,10 @@ export default {
         console.log('all valid')
         if (this.tab === 'login') {
           console.log('log in the user')
+          this.loginUser(this.formData)
         } else {
           console.log('Register the user')
+          this.registerUser(this.formData)
         }
       }
     },
