@@ -21,6 +21,61 @@ const state = {
       dueDate: '2019/05/13',
       dueTime: '16:00'
     }
+    // ,
+    // 'a104': {
+    //   name: 'C Fai shopping',
+    //   completed: false,
+    //   dueDate: '2019/05/12',
+    //   dueTime: '18:30'
+    // },
+    // 'a105': {
+    //   name: 'A Compra banane',
+    //   completed: false,
+    //   dueDate: '2019/05/14',
+    //   dueTime: '14:00'
+    // },
+    // 'a106': {
+    //   name: 'N Compra le mele',
+    //   completed: false,
+    //   dueDate: '2019/05/13',
+    //   dueTime: '16:00'
+    // },
+    // 'a107': {
+    //   name: 'C Fai shopping',
+    //   completed: false,
+    //   dueDate: '2019/05/12',
+    //   dueTime: '18:30'
+    // },
+    // 'a108': {
+    //   name: 'A Compra banane',
+    //   completed: false,
+    //   dueDate: '2019/05/14',
+    //   dueTime: '14:00'
+    // },
+    // 'a109': {
+    //   name: 'N Compra le mele',
+    //   completed: false,
+    //   dueDate: '2019/05/13',
+    //   dueTime: '16:00'
+    // },
+    // 'a110': {
+    //   name: 'C Fai shopping',
+    //   completed: false,
+    //   dueDate: '2019/05/12',
+    //   dueTime: '18:30'
+    // },
+    // 'a111': {
+    //   name: 'A Compra banane',
+    //   completed: false,
+    //   dueDate: '2019/05/14',
+    //   dueTime: '14:00'
+    // },
+    // 'a112': {
+    //   name: 'N Compra le mele',
+    //   completed: false,
+    //   dueDate: '2019/05/13',
+    //   dueTime: '16:00'
+    // }
   },
   search: '',
   sort: 'dueDate'

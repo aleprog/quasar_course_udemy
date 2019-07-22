@@ -61,7 +61,12 @@ module.exports = function (ctx) {
         'QTime',
         'QForm',
         'QBanner',
-        'QSelect'
+        'QSelect',
+        'QScrollArea',
+        'QToggle',
+        'QTabPanels',
+        'QTabPanel',
+        'QSeparator'
       ],
 
       directives: [
@@ -73,7 +78,8 @@ module.exports = function (ctx) {
       // Quasar plugins
       plugins: [
         'Notify',
-        'Dialog'
+        'Dialog',
+        'LocalStorage'
       ]
     },
 
@@ -106,7 +112,10 @@ module.exports = function (ctx) {
     },
 
     // animations: 'all', // --- includes all animations
-    animations: [],
+    animations: [
+      'zoomIn',
+      'zoomOut'
+    ],
 
     ssr: {
       pwa: false

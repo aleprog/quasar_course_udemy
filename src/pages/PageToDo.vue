@@ -1,35 +1,44 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page>
 
-    <div class="row q-mb-lg">
-      <search />
+    <div class="q-pa-md absolute full-width full-height column">
 
-      <sort />
-    </div>
+      <div class="row q-mb-lg">
+        <search />
+        <sort />
+      </div>
 
-    <p v-if="search
-              && !Object.keys(tasksToDo).length
-              && !Object.keys(tasksCompleted).length "
-    >No search results.</p>
+      <p v-if="search
+                && !Object.keys(tasksToDo).length
+                && !Object.keys(tasksCompleted).length "
+      >No search results.</p>
 
-    <no-tasks
-        v-if="Object.keys(tasksToDo).length == 0 && !search"
-    ></no-tasks>
+      <q-scroll-area class="q-scroll-area-tasks">
 
-    <tasks-to-do
-        v-if="Object.keys(tasksToDo).length > 0"
-        :tasks="tasksToDo"></tasks-to-do>
+        <no-tasks
+            v-if="Object.keys(tasksToDo).length == 0 && !search && !settings.showTasksInOneList"
+        ></no-tasks>
 
-    <tasks-completed
-        v-if="Object.keys(tasksCompleted).length > 0"
-        :tasks="tasksCompleted"></tasks-completed>
+        <tasks-to-do
+            v-if="Object.keys(tasksToDo).length > 0"
+            :tasks="tasksToDo"></tasks-to-do>
 
-    <div class="absolute-bottom text-center q-mb-lg">
-      <q-btn round
-             color="primary"
-             size="24px"
-             icon="add"
-             @click="showAddTasks = true"/>
+        <tasks-completed
+            v-if="Object.keys(tasksCompleted).length > 0"
+            :tasks="tasksCompleted"
+            class="q-mb-xl"
+        />
+
+      </q-scroll-area>
+
+      <div class="absolute-bottom text-center q-mb-lg no-pointer-events">
+        <q-btn round
+               color="primary"
+               size="24px"
+               class="all-pointer-events"
+               icon="add"
+               @click="showAddTasks = true"/>
+      </div>
     </div>
 
     <q-dialog v-model="showAddTasks" persistent>
@@ -53,7 +62,8 @@ export default {
     // dal modulo tasks prendo un elenco, array, di
     // singoli getter da importare ... wow !
     ...mapGetters('tasks', ['tasksToDo', 'tasksCompleted']),
-    ...mapState('tasks', ['search'])
+    ...mapState('tasks', ['search']),
+    ...mapGetters('settings', ['settings'])
     /*
     tasks () {
       return this.$store.getters['tasks/tasks']
@@ -77,5 +87,8 @@ export default {
 </script>
 
 <style>
-
+  .q-scroll-area-tasks {
+    display: flex;
+    flex-grow: 1;
+  }
 </style>
