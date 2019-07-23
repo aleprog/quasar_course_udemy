@@ -3,42 +3,56 @@
 
     <div class="q-pa-md absolute full-width full-height column">
 
-      <div class="row q-mb-lg">
-        <search />
-        <sort />
-      </div>
+      <template v-if="tasksDownloaded">
 
-      <p v-if="search
+        <div class="row q-mb-lg">
+          <search />
+          <sort />
+        </div>
+
+        <p v-if="search
                 && !Object.keys(tasksToDo).length
                 && !Object.keys(tasksCompleted).length "
-      >No search results.</p>
+        >No search results.</p>
 
-      <q-scroll-area class="q-scroll-area-tasks">
+        <q-scroll-area class="q-scroll-area-tasks">
 
-        <no-tasks
-            v-if="Object.keys(tasksToDo).length == 0 && !search && !settings.showTasksInOneList"
-        ></no-tasks>
+          <no-tasks
+              v-if="Object.keys(tasksToDo).length == 0 && !search && !settings.showTasksInOneList"
+          ></no-tasks>
 
-        <tasks-to-do
-            v-if="Object.keys(tasksToDo).length > 0"
-            :tasks="tasksToDo"></tasks-to-do>
+          <tasks-to-do
+              v-if="Object.keys(tasksToDo).length > 0"
+              :tasks="tasksToDo"></tasks-to-do>
 
-        <tasks-completed
-            v-if="Object.keys(tasksCompleted).length > 0"
-            :tasks="tasksCompleted"
-            class="q-mb-xl"
-        />
+          <tasks-completed
+              v-if="Object.keys(tasksCompleted).length > 0"
+              :tasks="tasksCompleted"
+              class="q-mb-xl"
+          />
 
-      </q-scroll-area>
+        </q-scroll-area>
 
-      <div class="absolute-bottom text-center q-mb-lg no-pointer-events">
-        <q-btn round
-               color="primary"
-               size="24px"
-               class="all-pointer-events"
-               icon="add"
-               @click="showAddTasks = true"/>
-      </div>
+        <div class="absolute-bottom text-center q-mb-lg no-pointer-events">
+          <q-btn round
+                 color="primary"
+                 size="24px"
+                 class="all-pointer-events"
+                 icon="add"
+                 @click="showAddTasks = true"/>
+        </div>
+
+      </template>
+
+      <template v-else>
+        <span class="absolute-center">
+          <q-spinner
+              color="primary"
+              size="3em"
+          />
+        </span>
+      </template>
+
     </div>
 
     <q-dialog v-model="showAddTasks" persistent>
@@ -62,7 +76,7 @@ export default {
     // dal modulo tasks prendo un elenco, array, di
     // singoli getter da importare ... wow !
     ...mapGetters('tasks', ['tasksToDo', 'tasksCompleted']),
-    ...mapState('tasks', ['search']),
+    ...mapState('tasks', ['search', 'tasksDownloaded']),
     ...mapGetters('settings', ['settings'])
     /*
     tasks () {

@@ -77,12 +77,9 @@ export default {
       if (!this.$refs.email.hasError &&
           !this.$refs.password.hasError
       ) {
-        console.log('all valid')
         if (this.tab === 'login') {
-          console.log('log in the user')
           this.loginUser(this.formData)
         } else {
-          console.log('Register the user')
           this.registerUser(this.formData)
         }
       }

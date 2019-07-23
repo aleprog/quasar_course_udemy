@@ -82,7 +82,8 @@ const state = {
     // }
   },
   search: '',
-  sort: 'dueDate'
+  sort: 'dueDate',
+  tasksDownloaded: false
 }
 const mutations = {
   updateTask (state, payload) {
@@ -106,6 +107,10 @@ const mutations = {
 
   setSort (state, value) {
     state.sort = value
+  },
+
+  setTasksDownloaded (state, value) {
+    state.tasksDownloaded = value
   }
 }
 
@@ -158,6 +163,10 @@ const actions = {
 
     userTasks.on('child_removed', (snapshot) => {
       commit('deleteTask', snapshot.key)
+    })
+
+    userTasks.once('value', _ => {
+      commit('setTasksDownloaded', true)
     })
   },
 

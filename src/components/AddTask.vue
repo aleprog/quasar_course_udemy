@@ -49,7 +49,6 @@ export default {
   methods: {
     ...mapActions('tasks', ['addTask']),
     submitTask () {
-      console.log('Verrà inviato allo store')
       this.addTask(this.taskToSubmit)
       this.$emit('close')
     }
