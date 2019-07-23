@@ -1,0 +1,1 @@
+export const APIKEY = 'api key from firebase project console config'
