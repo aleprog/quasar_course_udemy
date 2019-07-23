@@ -1,26 +1,30 @@
 import Vue from 'vue'
 import { uid } from 'quasar'
+import {
+  firebaseAuth,
+  firebaseDb
+} from '../boot/firebase'
 
 const state = {
   tasks: {
-    'a101': {
-      name: 'C Fai shopping',
-      completed: false,
-      dueDate: '2019/05/12',
-      dueTime: '18:30'
-    },
-    'a102': {
-      name: 'A Compra banane',
-      completed: false,
-      dueDate: '2019/05/14',
-      dueTime: '14:00'
-    },
-    'a103': {
-      name: 'N Compra le mele',
-      completed: false,
-      dueDate: '2019/05/13',
-      dueTime: '16:00'
-    }
+    // 'a101': {
+    //   name: 'C Fai shopping',
+    //   completed: false,
+    //   dueDate: '2019/05/12',
+    //   dueTime: '18:30'
+    // },
+    // 'a102': {
+    //   name: 'A Compra banane',
+    //   completed: false,
+    //   dueDate: '2019/05/14',
+    //   dueTime: '14:00'
+    // },
+    // 'a103': {
+    //   name: 'N Compra le mele',
+    //   completed: false,
+    //   dueDate: '2019/05/13',
+    //   dueTime: '16:00'
+    // }
     // ,
     // 'a104': {
     //   name: 'C Fai shopping',
@@ -87,41 +91,98 @@ const mutations = {
       payload.updates
     )
   },
+
   deleteTask (state, id) {
-    console.log('must delete ', id)
     Vue.delete(state.tasks, id)
   },
+
   addTask (state, payload) {
     Vue.set(state.tasks, payload.id, payload.task)
   },
+
   setSearch (state, value) {
     state.search = value
   },
+
   setSort (state, value) {
     state.sort = value
   }
 }
 
 const actions = {
-  updateTask ({ commit }, payload) {
-    commit('updateTask', payload)
+  updateTask ({ dispatch }, payload) {
+    dispatch('fbUpdateTask', payload)
   },
-  deleteTask ({ commit }, id) {
-    commit('deleteTask', id)
+
+  deleteTask ({ dispatch }, id) {
+    dispatch('fbDeleteTask', id)
   },
-  addTask ({ commit }, task) {
+
+  addTask ({ dispatch }, task) {
     let taskId = uid()
     let payload = {
       id: taskId,
       task: task
     }
-    commit('addTask', payload)
+    // commit('addTask', payload)
+    dispatch('fbAddTask', payload)
   },
+
   setSearch ({ commit }, value) {
     commit('setSearch', value)
   },
+
   setSort ({ commit }, value) {
     commit('setSort', value)
+  },
+
+  fbReadData ({ commit }, value) {
+    let userId = firebaseAuth.currentUser.uid
+    let userTasks = firebaseDb.ref('tasks/' + userId)
+
+    userTasks.on('child_added', (snapshot) => {
+      let payload = {
+        id: snapshot.key,
+        task: snapshot.val()
+      }
+      commit('addTask', payload)
+    })
+
+    userTasks.on('child_changed', (snapshot) => {
+      let payload = {
+        id: snapshot.key,
+        updates: snapshot.val()
+      }
+      commit('updateTask', payload)
+    })
+
+    userTasks.on('child_removed', (snapshot) => {
+      commit('deleteTask', snapshot.key)
+    })
+  },
+
+  fbAddTask (_, payload) {
+    let userId = firebaseAuth.currentUser.uid
+    let taskRef = firebaseDb.ref(
+      'tasks/' + userId + '/' + payload.id
+    )
+    taskRef.set(payload.task)
+  },
+
+  fbUpdateTask (_, payload) {
+    let userId = firebaseAuth.currentUser.uid
+    let taskRef = firebaseDb.ref(
+      'tasks/' + userId + '/' + payload.id
+    )
+    taskRef.update(payload.updates)
+  },
+
+  fbDeleteTask (_, id) {
+    let userId = firebaseAuth.currentUser.uid
+    let taskRef = firebaseDb.ref(
+      'tasks/' + userId + '/' + id
+    )
+    taskRef.remove()
   }
 }
 
@@ -131,8 +192,12 @@ const getters = {
     let keyOrdered = Object.keys(state.tasks)
 
     keyOrdered.sort((a, b) => {
-      let taskAProp = state.tasks[a][state.sort].toLowerCase()
-      let taskBProp = state.tasks[b][state.sort].toLowerCase()
+      let taskAProp = typeof state.tasks[a][state.sort] !== 'undefined'
+        ? state.tasks[a][state.sort].toLowerCase()
+        : ''
+      let taskBProp = typeof state.tasks[b][state.sort] !== 'undefined'
+        ? state.tasks[b][state.sort].toLowerCase()
+        : ''
 
       if (taskAProp > taskBProp) return 1
       else if (taskAProp < taskBProp) return -1
@@ -177,6 +242,7 @@ const getters = {
     })
     return tasks
   },
+
   tasksCompleted: (state, getters) => {
     let tasks = {}
     let tasksFiltered = getters.tasksFiltered
