@@ -1,6 +1,7 @@
 // https://firebase.google.com/docs/web/setup?authuser=0#add-sdks-initialize
 // Firebase App (the core Firebase SDK) is always required and must be listed first
 import * as firebase from 'firebase/app'
+import { APIKEY } from './config'
 
 // Add the Firebase products that you want to use
 import 'firebase/auth'
@@ -8,7 +9,7 @@ import 'firebase/database'
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
-  apiKey: 'AIzaSyAEdRaExUd3R6no9nXTXH6jpzzaIXKdeT4',
+  apiKey: APIKEY,
   authDomain: 'awesome-todo-9597a.firebaseapp.com',
   databaseURL: 'https://awesome-todo-9597a.firebaseio.com',
   projectId: 'awesome-todo-9597a',
