@@ -101,6 +101,10 @@ const mutations = {
     Vue.set(state.tasks, payload.id, payload.task)
   },
 
+  clearTasks (state) {
+    state.tasks = {}
+  },
+
   setSearch (state, value) {
     state.search = value
   },
@@ -167,6 +171,8 @@ const actions = {
 
     userTasks.once('value', _ => {
       commit('setTasksDownloaded', true)
+    }, error => {
+      console.log(error)
     })
   },
 
