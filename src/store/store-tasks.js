@@ -1,9 +1,7 @@
 import Vue from 'vue'
-import { uid } from 'quasar'
-import {
-  firebaseAuth,
-  firebaseDb
-} from '../boot/firebase'
+import { uid, Notify } from 'quasar'
+import { firebaseAuth, firebaseDb } from '../boot/firebase'
+import { showErrorMessage } from '../functions/function-show-error-message'
 
 const state = {
   tasks: {
@@ -87,10 +85,7 @@ const state = {
 }
 const mutations = {
   updateTask (state, payload) {
-    Object.assign(
-      state.tasks[payload.id],
-      payload.updates
-    )
+    Object.assign(state.tasks[payload.id], payload.updates)
   },
 
   deleteTask (state, id) {
@@ -149,7 +144,7 @@ const actions = {
     let userId = firebaseAuth.currentUser.uid
     let userTasks = firebaseDb.ref('tasks/' + userId)
 
-    userTasks.on('child_added', (snapshot) => {
+    userTasks.on('child_added', snapshot => {
       let payload = {
         id: snapshot.key,
         task: snapshot.val()
@@ -157,7 +152,7 @@ const actions = {
       commit('addTask', payload)
     })
 
-    userTasks.on('child_changed', (snapshot) => {
+    userTasks.on('child_changed', snapshot => {
       let payload = {
         id: snapshot.key,
         updates: snapshot.val()
@@ -165,54 +160,76 @@ const actions = {
       commit('updateTask', payload)
     })
 
-    userTasks.on('child_removed', (snapshot) => {
+    userTasks.on('child_removed', snapshot => {
       commit('deleteTask', snapshot.key)
     })
 
-    userTasks.once('value', _ => {
-      commit('setTasksDownloaded', true)
-    }, error => {
-      console.log(error)
-    })
+    userTasks.once(
+      'value',
+      _ => {
+        commit('setTasksDownloaded', true)
+      },
+      error => {
+        showErrorMessage(error.message)
+        this.$router.replacae('/auth')
+      }
+    )
   },
 
   fbAddTask (_, payload) {
     let userId = firebaseAuth.currentUser.uid
-    let taskRef = firebaseDb.ref(
-      'tasks/' + userId + '/' + payload.id
-    )
-    taskRef.set(payload.task)
+    let taskRef = firebaseDb.ref('tasks/' + userId + '/' + payload.id)
+    taskRef.set(payload.task, error => {
+      if (error) {
+        showErrorMessage(error.message)
+      } else {
+        Notify.create('Task Added')
+      }
+    })
   },
 
   fbUpdateTask (_, payload) {
     let userId = firebaseAuth.currentUser.uid
-    let taskRef = firebaseDb.ref(
-      'tasks/' + userId + '/' + payload.id
-    )
-    taskRef.update(payload.updates)
+    let taskRef = firebaseDb.ref('tasks/' + userId + '/' + payload.id)
+    taskRef.update(payload.updates, error => {
+      if (error) {
+        showErrorMessage(error.message)
+      } else {
+        let keys = Object.keys(payload.updates)
+        if (!keys.includes('completed')) {
+          Notify.create('Task updated')
+        }
+      }
+    })
   },
 
   fbDeleteTask (_, id) {
     let userId = firebaseAuth.currentUser.uid
-    let taskRef = firebaseDb.ref(
-      'tasks/' + userId + '/' + id
-    )
-    taskRef.remove()
+    let taskRef = firebaseDb.ref('tasks/' + userId + '/' + id)
+    taskRef.remove(error => {
+      if (error) {
+        showErrorMessage(error.message)
+      } else {
+        Notify.create('Task deleted')
+      }
+    })
   }
 }
 
 const getters = {
-  tasksSorted: (state) => {
+  tasksSorted: state => {
     let tasksSorted = {}
     let keyOrdered = Object.keys(state.tasks)
 
     keyOrdered.sort((a, b) => {
-      let taskAProp = typeof state.tasks[a][state.sort] !== 'undefined'
-        ? state.tasks[a][state.sort].toLowerCase()
-        : ''
-      let taskBProp = typeof state.tasks[b][state.sort] !== 'undefined'
-        ? state.tasks[b][state.sort].toLowerCase()
-        : ''
+      let taskAProp =
+        typeof state.tasks[a][state.sort] !== 'undefined'
+          ? state.tasks[a][state.sort].toLowerCase()
+          : ''
+      let taskBProp =
+        typeof state.tasks[b][state.sort] !== 'undefined'
+          ? state.tasks[b][state.sort].toLowerCase()
+          : ''
 
       if (taskAProp > taskBProp) return 1
       else if (taskAProp < taskBProp) return -1
@@ -230,16 +247,12 @@ const getters = {
     let tasks = getters.tasksSorted
 
     if (state.search) {
-      Object.keys(tasks)
-        .forEach(key => {
-          let task = tasks[key]
-          if (task.name
-            .toLowerCase()
-            .includes(state.search.toLowerCase()
-            )) {
-            tasksFiltered[key] = task
-          }
-        })
+      Object.keys(tasks).forEach(key => {
+        let task = tasks[key]
+        if (task.name.toLowerCase().includes(state.search.toLowerCase())) {
+          tasksFiltered[key] = task
+        }
+      })
       return tasksFiltered
     }
     return tasks
@@ -249,7 +262,7 @@ const getters = {
     let tasks = {}
     let tasksFiltered = getters.tasksFiltered
 
-    Object.keys(tasksFiltered).forEach((key) => {
+    Object.keys(tasksFiltered).forEach(key => {
       let task = tasksFiltered[key]
       if (!task.completed) {
         tasks[key] = task
@@ -262,7 +275,7 @@ const getters = {
     let tasks = {}
     let tasksFiltered = getters.tasksFiltered
 
-    Object.keys(tasksFiltered).forEach((key) => {
+    Object.keys(tasksFiltered).forEach(key => {
       let task = tasksFiltered[key]
       if (task.completed) {
         tasks[key] = task
