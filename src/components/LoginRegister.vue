@@ -7,7 +7,7 @@
           <q-icon name="account_circle" color="primary" />
         </template>
         {{ tab | titleCase }}
-        Register to access To Do everywhere.
+        to access To Do everywhere.
       </q-banner>
     </div>
 

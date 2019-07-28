@@ -17,6 +17,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 600,
+    minWidth: 800,
+    minHeight: 500,
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true
@@ -33,9 +35,9 @@ function createWindow () {
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  // if (process.platform !== 'darwin') {
+  app.quit()
+  // }
 })
 
 app.on('activate', () => {
