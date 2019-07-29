@@ -69,6 +69,19 @@
           </q-item-section>
         </q-item>
 
+        <q-item
+          v-if="$q.platform.is.electron"
+          @click="quit"
+          clickable class="text-grey-4 absolute-bottom" >
+          <q-item-section avatar>
+            <q-icon name="power_settings_new" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Quit</q-item-label>
+            <q-item-label caption>Esci dall'app</q-item-label>
+          </q-item-section>
+        </q-item>
+
       </q-list>
     </q-drawer>
 
@@ -107,7 +120,23 @@ export default {
     ...mapState('auth', ['loggedIn'])
   },
   methods: {
-    ...mapActions('auth', ['logoutUser'])
+    ...mapActions('auth', ['logoutUser']),
+    quit () {
+      this.$q.dialog({
+        title: 'Confirm',
+        message: 'Really quit Awesom To Do ?',
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        console.log('>>>> OK')
+        if (this.$q.platform.is.electron) {
+          // In questo caso da dentro la vue app mando fuori, al container Electron
+          // un evento
+          // Gestito in fondo al file src-electron\main-process\electron-main.js
+          require('electron').ipcRenderer.send('quit-app')
+        }
+      })
+    }
   }
 }
 </script>

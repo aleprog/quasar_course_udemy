@@ -1,5 +1,5 @@
-import { app, BrowserWindow } from 'electron'
-
+import { app, BrowserWindow, Menu, ipcMain } from 'electron'
+import { menuTemplate } from './electron-main-menu-template'
 /**
  * Set `__statics` path to static files in production;
  * The reason we are setting it here is that the path needs to be evaluated at runtime
@@ -8,7 +8,8 @@ if (process.env.PROD) {
   global.__statics = require('path').join(__dirname, 'statics').replace(/\\/g, '\\\\')
 }
 
-let mainWindow
+export let mainWindow
+const menu = Menu.buildFromTemplate(menuTemplate)
 
 function createWindow () {
   /**
@@ -30,6 +31,8 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  Menu.setApplicationMenu(menu)
 }
 
 app.on('ready', createWindow)
@@ -44,4 +47,13 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+// Vedi il metodo qui qui: src\layouts\Layout.vue
+// Da notare che
+// - devo usare l'oggetto ipcMain per attaccare il listenere
+// ma
+// - devo comunque usare app per il quit
+ipcMain.on('quit-app', () => {
+  app.quit()
 })

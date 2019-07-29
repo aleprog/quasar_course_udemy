@@ -19,6 +19,9 @@
       "build": {
         "spa": {
           "iconHash": "1401aa325e349349424fa9c62c116e13"
+        },
+        "electron": {
+          "iconHash": "1401aa325e349349424fa9c62c116e13"
         }
       }
     }
