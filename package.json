@@ -1,9 +1,9 @@
 {
-  "name": "awesome-todo",
+  "name": "awesome_todo",
   "version": "0.0.1",
   "description": "A Quasar Framework app",
   "productName": "Awesome Todo",
-  "cordovaId": "it.realtebo.awesome-todo",
+  "cordovaId": "it.realtebo.awesome_todo",
   "author": "Realtebo <mirkotebaldi@yahoo.it>",
   "private": true,
   "scripts": {
